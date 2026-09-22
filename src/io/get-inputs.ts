@@ -46,7 +46,10 @@ function getBranchLabel(shaInput: string): string | undefined {
   const prLabel = github.context.payload.pull_request?.head.label
   if (prLabel) return prLabel
   const {ref} = github.context
-  if (!ref.startsWith('refs/heads/')) {
+  if (
+    github.context.eventName === 'merge_group' ||
+    !ref.startsWith('refs/heads/')
+  ) {
     core.warning(`matchBranch is ignored because ${ref} is not a branch`)
     return undefined
   }

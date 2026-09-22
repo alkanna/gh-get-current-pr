@@ -180,19 +180,18 @@ function getInputs() {
     };
 }
 exports["default"] = getInputs;
-// Head label is "owner:branch", so matching on it also rules out same named branches from forks
 function getBranchLabel(shaInput) {
     var _a;
     if (shaInput) {
         core.warning('matchBranch is ignored when sha is set, the workflow branch may not be the branch of that commit');
         return undefined;
     }
-    // Any PR event payload carries the head branch, while context.ref points to refs/pull/N/merge there
     const prLabel = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head.label;
     if (prLabel)
         return prLabel;
     const { ref } = github.context;
-    if (!ref.startsWith('refs/heads/')) {
+    if (github.context.eventName === 'merge_group' ||
+        !ref.startsWith('refs/heads/')) {
         core.warning(`matchBranch is ignored because ${ref} is not a branch`);
         return undefined;
     }

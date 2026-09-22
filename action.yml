@@ -15,6 +15,9 @@ inputs:
   filterOutDraft:
     description: True, False, 1 or 0 if only non-draft PRs should be returned. Defaults to false.
     required: false
+  matchBranch:
+    description: True, False, 1 or 0 if only PRs whose head branch matches the branch the workflow runs on should be returned. Ignored when sha is set or the workflow does not run on a branch. Defaults to false.
+    required: false
 outputs:
   pr_found:
     description: The outcome if a PR has been found. If so, the other outputs are set.

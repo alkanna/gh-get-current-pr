@@ -4,6 +4,7 @@ interface Options {
   draft?: boolean
   closed?: boolean
   preferWithHeadSha?: string
+  branchLabel?: string
 }
 
 const Defaults: Options = {
@@ -24,13 +25,16 @@ export default function getLastPullRequest(
   const filteredPRs = pullRequests
     .filter(({state}) => state === 'open' || !!options.closed)
     .filter(({draft}) => !draft || !!options.draft)
+    .filter(
+      ({head}) => !options.branchLabel || head.label === options.branchLabel
+    )
 
   if (filteredPRs.length === 0) return null
 
-  const defaultChoice = pullRequests[0]
+  const defaultChoice = filteredPRs[0]
   const preferredChoice =
     options.preferWithHeadSha !== undefined
-      ? findByHeadSha(pullRequests, options.preferWithHeadSha)
+      ? findByHeadSha(filteredPRs, options.preferWithHeadSha)
       : null
   return preferredChoice || defaultChoice
 }

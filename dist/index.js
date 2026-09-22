@@ -83,12 +83,13 @@ function getLastPullRequest(pullRequests, options) {
     options = Object.assign(Object.assign({}, Defaults), options);
     const filteredPRs = pullRequests
         .filter(({ state }) => state === 'open' || !!options.closed)
-        .filter(({ draft }) => !draft || !!options.draft);
+        .filter(({ draft }) => !draft || !!options.draft)
+        .filter(({ head }) => !options.branchLabel || head.label === options.branchLabel);
     if (filteredPRs.length === 0)
         return null;
-    const defaultChoice = pullRequests[0];
+    const defaultChoice = filteredPRs[0];
     const preferredChoice = options.preferWithHeadSha !== undefined
-        ? findByHeadSha(pullRequests, options.preferWithHeadSha)
+        ? findByHeadSha(filteredPRs, options.preferWithHeadSha)
         : null;
     return preferredChoice || defaultChoice;
 }
@@ -160,20 +161,43 @@ function getInputs() {
     const token = core.getInput('github-token', { required: true });
     const triggeredFromPR = github.context.eventName === 'pull_request' ||
         github.context.eventName === 'pull_request_target';
-    const sha = core.getInput('sha') ||
+    const shaInput = core.getInput('sha');
+    const sha = shaInput ||
         (triggeredFromPR
             ? (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head.sha
             : github.context.sha);
     const filterOutDraft = (0, get_input_as_boolean_1.default)('filterOutDraft');
     const filterOutClosed = (0, get_input_as_boolean_1.default)('filterOutClosed');
+    const branchLabel = (0, get_input_as_boolean_1.default)('matchBranch')
+        ? getBranchLabel(shaInput)
+        : undefined;
     return {
         token,
         sha,
         filterOutDraft,
-        filterOutClosed
+        filterOutClosed,
+        branchLabel
     };
 }
 exports["default"] = getInputs;
+// Head label is "owner:branch", so matching on it also rules out same named branches from forks
+function getBranchLabel(shaInput) {
+    var _a;
+    if (shaInput) {
+        core.warning('matchBranch is ignored when sha is set, the workflow branch may not be the branch of that commit');
+        return undefined;
+    }
+    // Any PR event payload carries the head branch, while context.ref points to refs/pull/N/merge there
+    const prLabel = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head.label;
+    if (prLabel)
+        return prLabel;
+    const { ref } = github.context;
+    if (!ref.startsWith('refs/heads/')) {
+        core.warning(`matchBranch is ignored because ${ref} is not a branch`);
+        return undefined;
+    }
+    return `${github.context.repo.owner}:${ref.slice('refs/heads/'.length)}`;
+}
 
 
 /***/ }),
@@ -281,13 +305,14 @@ const set_output_1 = __importDefault(__nccwpck_require__(3741));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { token, sha, filterOutClosed, filterOutDraft } = (0, get_inputs_1.default)();
+            const { token, sha, filterOutClosed, filterOutDraft, branchLabel } = (0, get_inputs_1.default)();
             const octokit = github.getOctokit(token);
             const allPRs = yield (0, get_prs_associated_with_commit_1.default)(octokit, sha);
             const pr = (0, get_last_pr_1.default)(allPRs, {
                 draft: !filterOutDraft,
                 closed: !filterOutClosed,
-                preferWithHeadSha: sha
+                preferWithHeadSha: sha,
+                branchLabel
             });
             (0, set_output_1.default)(pr);
         }

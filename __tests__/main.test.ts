@@ -28,3 +28,35 @@ test('find a draft PRs', () => {
   const foundPR = getLastPullRequest(testPRs, {draft: true}) || {id: null}
   expect(foundPR.id).toBe(testPRs[0].id)
 })
+
+test('only returns PR matching the branch', () => {
+  const testPRs = [
+    createDummyPR(1, {sha: 'abc', label: 'owner:feature-a'}),
+    createDummyPR(2, {sha: 'abc', label: 'owner:feature-b'})
+  ]
+
+  const foundPR = getLastPullRequest(testPRs, {
+    preferWithHeadSha: 'abc',
+    branchLabel: 'owner:feature-b'
+  }) || {id: null}
+  expect(foundPR.id).toBe(testPRs[1].id)
+})
+
+test('ignores same named branch from a fork', () => {
+  const testPRs = [
+    createDummyPR(1, {sha: 'abc', label: 'fork-owner:fix'}),
+    createDummyPR(2, {sha: 'abc', label: 'owner:fix'})
+  ]
+
+  const foundPR = getLastPullRequest(testPRs, {branchLabel: 'owner:fix'}) || {
+    id: null
+  }
+  expect(foundPR.id).toBe(testPRs[1].id)
+})
+
+test('returns null when no PR matches the branch', () => {
+  const testPRs = [createDummyPR(1, {sha: 'abc', label: 'owner:feature-a'})]
+
+  const foundPR = getLastPullRequest(testPRs, {branchLabel: 'owner:master'})
+  expect(foundPR).toBeNull()
+})

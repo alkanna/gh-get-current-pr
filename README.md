@@ -42,7 +42,7 @@ See [action.yml](action.yml) for more details.
       - uses: 8BitJonny/gh-get-current-pr@4.0.0
         id: PR
         with:
-          # Authetication token to access GitHub APIs. (Can be omitted by default.)
+          # Authentication token to access GitHub APIs. (Can be omitted by default.)
           github-token: ${{ github.token }}
           # For which commit SHA the action should lookup a PR for (By default current commit)
           sha: ${{ github.event.pull_request.head.sha }}
@@ -50,6 +50,8 @@ See [action.yml](action.yml) for more details.
           filterOutClosed: true
           # Only return if PR is not in draft state. (By default it returns PRs in any state.)
           filterOutDraft: true
+          # Only return a PR whose head branch is the branch the workflow runs on. (By default it returns PRs from any branch.)
+          matchBranch: true
 ```
 
 ### Outputs

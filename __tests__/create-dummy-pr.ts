@@ -3,6 +3,7 @@ import {PR} from '../src/types/pull-request'
 interface Options {
   sha?: string
   draft?: boolean
+  label?: string
 }
 
 export default function createDummyPR(id: number, options: Options): PR {
@@ -10,7 +11,8 @@ export default function createDummyPR(id: number, options: Options): PR {
     id,
     draft: options.draft || false,
     head: {
-      sha: options.sha || ''
+      sha: options.sha || '',
+      label: options.label || ''
     }
   })
 }

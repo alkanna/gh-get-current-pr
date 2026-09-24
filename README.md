@@ -34,7 +34,7 @@ This action enables you to get the PR no matter which event type triggered the w
 
 ```yml
     steps:
-      - uses: alkanna/gh-get-current-pr@5.0.0
+      - uses: alkanna/gh-get-current-pr@5.0.1
         id: PR
 
       - run: echo "Your PR number is ${{ steps.PR.outputs.number }} and its JSON is ${{ steps.PR.outputs.pr }}"
@@ -44,7 +44,7 @@ This action enables you to get the PR no matter which event type triggered the w
 See [action.yml](action.yml) for more details.
 ```yml
     steps:
-      - uses: alkanna/gh-get-current-pr@5.0.0
+      - uses: alkanna/gh-get-current-pr@5.0.1
         id: PR
         with:
           # Authentication token to access GitHub APIs. (Can be omitted by default.)
@@ -63,7 +63,7 @@ See [action.yml](action.yml) for more details.
 See [action.yml](action.yml) for more details.
 ```yml
     steps:
-      - uses: alkanna/gh-get-current-pr@5.0.0
+      - uses: alkanna/gh-get-current-pr@5.0.1
         id: PR
 
       - run: echo "PR ${prNumber} ${prTitle} at ${prUrl} is ${prJSON}"
@@ -88,7 +88,7 @@ Useful when the information you're looking for is not exported as a direct outpu
 See [GitHub Documentation](https://docs.github.com/en/rest/commits/commits#list-pull-requests-associated-with-a-commit) for details how the object looks like.
 ```yml
     steps:
-      - uses: alkanna/gh-get-current-pr@5.0.0
+      - uses: alkanna/gh-get-current-pr@5.0.1
         id: PR
 
       - name: "Pull Request ${{ steps.PR.outputs.number }}"

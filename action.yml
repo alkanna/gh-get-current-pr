@@ -1,4 +1,4 @@
-name: Get Current Pull Request
+name: Resolve Current Pull Request
 author: alkanna
 description: Get the PR associated with the current commit.
 inputs:

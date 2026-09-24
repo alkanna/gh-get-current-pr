@@ -6,19 +6,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: khan/pull-request-comment-trigger@v1.1.0
+    - uses: khan/pull-request-comment-trigger@edab8d9ba7759221187ef7120592a6fbfada0d18 # v1.1.0
       id: check
       with:
         trigger: '!build'
         reaction: '+1'
       env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       if: steps.check.outputs.triggered == 'true'
       with:
         token: ${{ secrets.PAT }}
     - name: Use Node.js
-      uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # 3.9.1
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
         node-version: '24'
         cache: 'npm'
@@ -34,7 +34,7 @@ jobs:
         fi
 
     - name: Commit and Push
-      uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 # v6.0.1
+      uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
       if: ${{ env.changes_exist == 'true' }}
       with:
         commit_message: ':package: (core): update build files'

@@ -17,6 +17,11 @@
 
 # Github Action: Get current PR
 
+> [!NOTE]
+> This is a fork of [8BitJonny/gh-get-current-pr](https://github.com/8BitJonny/gh-get-current-pr), maintained by Khiman Louër at [alkanna/gh-get-current-pr](https://github.com/alkanna/gh-get-current-pr) since 2026-09-24.
+> It has been modified from the original, notably to add the `matchBranch` input and move to Node 24. See the git history for the full list of changes.
+> Like the original, it is licensed under the [GNU GPL v3.0](LICENSE).
+
 Github Action for checking if the current commit belongs to a pull request and returning the full PR object if that is the case
 
 ## :thinking: Why?

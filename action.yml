@@ -1,5 +1,5 @@
 name: Get Current Pull Request
-author: 8BitJonny
+author: alkanna
 description: Get the PR associated with the current commit.
 inputs:
   github-token:
